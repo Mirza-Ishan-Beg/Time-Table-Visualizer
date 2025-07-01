@@ -1,0 +1,139 @@
+Detailed Summary of WeeklySchedulePlotter Python Script
+
+Overview
+The WeeklySchedulePlotter Python script is designed to automate the process of visualizing a weekly schedule stored in an Excel file. It extracts time slots for different subjects, processes this data, and generates a polar plot that visually represents the schedule in a 24-hour clock format for each day of the week. The script employs several libraries, including matplotlib, numpy, and pandas, to facilitate data manipulation and visualization.
+Key Components
+
+    Imports
+        The script begins by importing the necessary libraries:
+
+        python
+
+    import matplotlib.pyplot as plt  # For plotting graphs
+    import numpy as np                # For numerical operations
+    import pandas as pd               # For data manipulation and reading Excel files
+    import re                         # For regular expressions to extract time data from strings
+
+Class Definition: WeeklySchedulePlotter
+
+    The main functionality of the script is encapsulated in the WeeklySchedulePlotter class.
+
+Initialization Method (__init__)
+
+    Signature:
+
+    python
+
+    def __init__(self, excel_file):
+
+    Parameters:
+        excel_file: A string that specifies the path to the Excel file containing the weekly schedule.
+    Variables:
+        self.df: A DataFrame that stores the content of the Excel file, created using pd.read_excel(excel_file).
+        self.time_picker: A regular expression pattern r"\d{4}" used to find time entries in the format HHMM (e.g., 0930).
+        self.block_picker: A regular expression pattern r'\([^@^/]+\)' used to find lesson blocks within parentheses.
+        self.dic_time_lessons: An empty dictionary that will hold the processed time lessons, with days of the week as keys.
+        self.day: A list of strings representing the days of the week, indexed from 0 to 6 (Monday to Sunday).
+    Process Call: The process_schedule() method is called to begin processing the input data immediately upon initialization.
+
+Data Processing Method (process_schedule)
+
+    Signature:
+
+    python
+
+    def process_schedule(self):
+
+    Purpose: This method extracts time and subject information from the DataFrame and organizes it into self.dic_time_lessons.
+    Variables:
+        subject: Iterates through each column in the DataFrame.
+        ptr: An index counter initialized to 0, representing the current day in the week being processed.
+        cell: Each entry in the column corresponding to a subject.
+        matched_times_list: A list containing time entries extracted from cell using re.findall(self.time_picker, cell).
+        matched_block: A string that joins lesson blocks extracted from cell using re.findall(self.block_picker, cell + "@").
+    Logic:
+        For each subject, if the subject is not the "DAY IN THE WEEK" column, it iterates through its entries.
+        For each entry, if it is not "NONE", it extracts time and lesson block data.
+        The data is organized in self.dic_time_lessons such that the keys are the days of the week and the values are lists of dictionaries with subject names and their corresponding time blocks.
+
+Time Conversion Method (convert_times)
+
+    Signature:
+
+    python
+
+    def convert_times(self, times_list):
+
+    Parameters:
+        times_list: A list of lists where each sublist contains time entries that need to be converted into hour and minute tuples.
+    Returns: A list of tuples formatted as (start_hour, start_minute, end_hour, end_minute).
+    Logic:
+        Initializes an empty list called converted_times.
+        Iterates over each time_range in times_list.
+        Validates that time_range has an even number of elements, which indicates pairs of start and end times.
+        Extracts the start and end times, splits them into hours and minutes, and appends the tuple to converted_times.
+        Raises a ValueError if any time range does not have an even number of elements.
+
+Clock Plotting Method (plot_clock)
+
+    Signature:
+
+    python
+
+    def plot_clock(self, highlighted_times, custom_tags=None, save_path=None, day_index=0):
+
+    Parameters:
+        highlighted_times: A list of tuples containing the start and end times for highlighting in the clock.
+        custom_tags: An optional list of strings for tagging the highlighted time ranges.
+        save_path: A string specifying where to save the generated plot.
+        day_index: An integer representing the index of the current day (default is 0 for Monday).
+    Logic:
+        Creates a polar subplot with a specified figure size.
+        Sets the background color of the plot to black.
+        Defines num_segments to represent the total number of minutes in a 24-hour period (1440 minutes).
+        Plots the circular background of the clock.
+        Draws lines to indicate minute and hour segments, with varying styles for different intervals.
+        Fills segments for the highlighted time ranges, adjusting the angles accordingly.
+        Places text labels at the midpoint of each time range to indicate start and end times, as well as any associated tags.
+        Configures the plot title to indicate the day of the week and saves the figure if a save_path is provided.
+
+Plot Generation Method (generate_plots)
+
+    Signature:
+
+    python
+
+    def generate_plots(self):
+
+    Purpose: This method iterates over each day of the week and generates a clock plot for the scheduled times.
+    Logic:
+        Initializes a counter c for indexing the days of the week.
+        Iterates over self.dic_time_lessons to extract tags and times for each day.
+        Converts the extracted times using the convert_times() method.
+        Calls the plot_clock() method to create and save the plot for the current day, incrementing c after each plot.
+
+Main Execution Block
+
+    Signature:
+
+    python
+
+        if __name__ == "__main__":
+
+        Logic:
+            Specifies the Excel file path (e.g., "Weekly_Schedule.xlsx").
+            Instantiates the WeeklySchedulePlotter class with the specified Excel file.
+            Calls generate_plots() on the instance to produce the clock plots for the weekly schedule.
+
+Usage Instructions
+
+To use this script:
+
+    Ensure the required libraries (matplotlib, numpy, pandas, and re) are installed and configured correctly.
+    Verify that the Microsoft Visual Studio Redistributable (2019) is set up as it is required for matplotlib.
+    Create an Excel file named "Weekly_Schedule.xlsx" that includes the weekly schedule formatted with subjects and time slots.
+    Run the script in an environment that supports these libraries, and it will generate high-resolution clock images for each day of the week, saving them in a directory called timetables_chart.
+
+Conclusion
+
+The WeeklySchedulePlotter class is a comprehensive tool for extracting and visualizing weekly schedules from Excel files. By leveraging pandas for data manipulation and matplotlib for graphical representation, it effectively communicates scheduling information in a user-friendly clock format.
