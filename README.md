@@ -1,7 +1,7 @@
 ## Table of Content
-1. [[#Introduction]]
-2. [[#Installation]]
-3. [[#Usage]]
+1. [Introduction](#Introduction)
+2. [Installation](#Installation)
+3. [Usage](#Usage)
 
 ---
 
